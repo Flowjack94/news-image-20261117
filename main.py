@@ -1,24 +1,29 @@
-"""Entry point for the news-image-20261117 submission.
+#!/usr/bin/env python3
+"""news-image-20261117 entry point.
 
-The front page itself is the file entry.png next to this script; this
-program only places a copy of it where the grader expects it. It uses
-only the Python standard library, touches no network, and writes the
-exact same bytes on every run, so the two grading runs agree.
+The front page itself is baked into this repository as entry.png; this
+program only copies that file to the output directory the harness asks
+for. It touches no network, and its output is byte-identical on every
+run.
 """
 import os
 import shutil
-from pathlib import Path
+import sys
 
-HERE = Path(__file__).resolve().parent
-SOURCE = HERE / "entry.png"
+HERE = os.path.dirname(os.path.abspath(__file__))
 
 
 def main():
-    target_dir = Path(os.environ.get("MAKEFUN_OUTPUT_DIR", "/output"))
-    target_dir.mkdir(parents=True, exist_ok=True)
-    shutil.copyfile(SOURCE, target_dir / "entry.png")
+    # The harness sets MAKEFUN_OUTPUT_DIR; without it we fall back to the
+    # conventional /output directory. The copy is a plain file copy, so the
+    # bytes in the destination match entry.png exactly.
+    out_dir = os.environ.get("MAKEFUN_OUTPUT_DIR", "/output")
+    os.makedirs(out_dir, exist_ok=True)
+    src = os.path.join(HERE, "entry.png")
+    dst = os.path.join(out_dir, "entry.png")
+    shutil.copyfile(src, dst)
     return 0
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    sys.exit(main())
